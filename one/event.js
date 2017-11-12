@@ -1,6 +1,22 @@
-var events = require('events');
+
+/*
+
+        继承EventEmitter:
+
+        大多数的时候我们不会使用EventEmitter,而是在对象中继承他。
+        包括fs  net  http在内的，只要是支持事件响应的核心模块都是
+        EventEmitter的子类。
+
+        Why do?
+
+        具有某个实体功能的对象实现事件符合语义
+        JS对象机制基于原型，支持部分多重继承，继承EventEmittet不会打乱对象原有的继承关系。
+
+
+*/
+var event = require('events');
 //创建eventEmitter对象
-var eventEmitter = new events.EventEmitter();  //事件触发器
+var eventEmitter = new event.EventEmitter();  //事件触发器
 
 //创建事件处理程序
 var connectHandler = function connected(){
@@ -48,6 +64,7 @@ console.log('程序执行完毕');
 
     new event.EventEmitter.----------------------------------
 
+    方法：
     on(event,listener)  为指定事件添加一个监听器，接受一个字符串event，和一个回调函数。
 
     once(event,listener)  为指定事件注册一个单词监听器，监听器只会触发一次，触发后立刻解除该监听器。
@@ -64,4 +81,13 @@ console.log('程序执行完毕');
     listeners(event)  返回指定事件的监听器数组
 
     emit(event,[arg1],[arg2],[arg3],[...]) 按参数顺序执行每个监听器，如果事件有注册监听器返回true，没有返回false
+
+    类方法：
+    listenerCount(emitter,event)  返回指定事件的监听器数量。
+
+    事件：
+    newListener(event,listener)  该事件在添加新监听器时被触发;
+
+    removeListener(event,listener)  从指定监听器数组中删除一个监听器，会改变剩余监听器索引
+
 */
