@@ -58,6 +58,11 @@
           start 默认0，数字
           end  默认buffer.length，数字
           返回一个新的缓冲区，他和旧的缓冲区指向同一块内存，但是从索引start到end的位置剪切
+
+      缓冲区长度：
+          buf.length   返回Buffe对象所占内存的长度
+
+
 */
 
 var buf = new Buffer('www');
