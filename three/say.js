@@ -1,6 +1,9 @@
 
 
-say = () => {
-  console.log('Hello')
+// say = (content) => {
+//   console.log(content)
+// }
+function execute(somefun,content){
+  somefun(content);
 }
-say()
+execute((content)=>{console.log(content)},'Hello！！！！！！！')
