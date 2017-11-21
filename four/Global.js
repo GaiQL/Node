@@ -20,8 +20,35 @@
       __dirname:
           表示当前执行脚本所在的目录。
 
+      setTimeout(function,1000);
+
 */
 
 
-console.log(__filename);
-console.log(__dirname);
+// console.log(__filename);
+// console.log(__dirname);
+
+// setTimeout(()=>{console.log('Hello world')},1000)
+// setInterval(()=>{console.info('Hello world')},2000)
+
+/*
+
+    process是一个全局变量，即global对象的属性；
+    它用于描述当前Node.js进程的状态，提供了一个与操作系统的简单接口
+
+    porcess对象：
+      exit:当进程准备退出时触发
+      beforeExit:当node清空事件循环，并且没有其他安排时触发这个事件
+      uncaughtException:当一个异常冒泡回到事件循环，触发这个事件
+      signal:当进程接受到信号时就触发。
+
+
+*/
+console.log(process.uptime())
+// process.on('exit',(code)=>{
+//   setTimeout(function() {
+//     console.log("该代码不会执行");
+//   }, 0);
+//   console.log('退出码为'+code);
+// })
+// console.log('程序执行结束')
