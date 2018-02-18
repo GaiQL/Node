@@ -48,6 +48,23 @@ var fs = require('fs');
           data - 要写入文件的数据，可以是String或Bufferd对象；
           opetions - 该参数是一个对象{encoding,mode,flage},默认编码为utf-8,模式为0666,flag为'W';
           callback - 只包含错误信息参数，在写入失败时返回；
+
+          异步模式下读取文件的语法格式：
+            fs.read(fd,buffer,offset,length,position,callback);
+            =》该方法使用了文件描述符来读取文件
+            fd : 通过fs.open()方法返回的文件描述符；
+            buffer : 数据写入的缓冲区;
+            offset : 缓冲区写入的写入偏移量;
+            length : 要从文件中读取的字节数;
+            position : 文件读取的起始位置，如果position的值为null，则会从当前文件指针的位置读取
+            callback : 回调函数，有三个参数,err为错误信息,bytesRead表示读取的字节数,buffer为缓冲区对象
+
+            fs.close(fd,callback)
+            异步模式下关闭文件文件的语法格式；
+            fd : 通过fs.open()方法返回的文件描述符;
+            callback : 回调函数，没有参数;
+
+
 */
 
 //读取文件
@@ -89,18 +106,74 @@ var fs = require('fs');
 // })
 
 
-console.log('准备写入文件');
-fs.writeFile('input.txt','我是通过写入的文件内容',function(err){
-  if(err){
-    return console.log(err);
-  }
-  console.log('文件写入成功');
-  console.log('哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈');
-  fs.readFile('input.txt',(err,data)=>{
-    if(err){
-      return console.log(err);
-    }
-    console.log(data.toString());
-    console.log('文件读取成功');
-  })
-})
+// console.log('准备写入文件');
+// fs.writeFile('input.txt','真的神奇',function(err){
+//   if(err){
+//     return console.log(err);
+//   }
+//   console.log('文件写入成功');
+//   console.log('哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈');
+//   fs.readFile('input.txt',(err,data)=>{
+//     if(err){
+//       return console.log(err);
+//     }
+//     console.log(data.toString());
+//     console.log('文件读取成功');
+//   })
+// })
+
+//
+// var buf = new Buffer(1024);
+// console.log('准备打开已存在的文件');
+// fs.open('input.txt','r+',(err,fd)=>{
+//   if(err){
+//     return console.log(err);
+//   }
+//   console.log(fd);
+//   console.log('文件打开成功');
+//   console.log('准备读取文件');
+//   fs.read(fd,buf,0,buf.length,0,(err,bytesRead)=>{
+//     if(err){
+//       return console.log(err);
+//     }
+//     console.log(bytesRead + '字节被读取');
+//     if(bytesRead > 0){
+//       console.log(buf.slice(0,bytesRead).toString());
+//     }
+//     fs.close(fd,(err)=>{
+//       if(err){
+//         return console.log(err);
+//       }
+//       console.log('文件关闭成功');
+//     })
+//   });
+// })
+//
+// fs.mkdir("tmp/test",(err)=>{
+//   if(err){
+//     console.log(err);
+//     return;
+//   }
+//   console.log('目录创建成功');
+// })
+// 
+// fs.readdir("tmp",(err,file)=>{
+//   if(err){
+//     console.log(err);
+//     return;
+//   }
+//   console.log(file);
+//   })
+  // fs.mkdir("tmp/haha",(err)=>{
+  //   if(!err){
+  //     console.log('执行成功')
+  //   }
+  // })
+//
+// fs.rmdir("tmp",(err)=>{
+//   if(err){
+//     console.log(err);
+//     return;
+//   }
+//   console.log('执行成功');
+// })

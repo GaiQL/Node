@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <script>
+      var data = {
+        url:'hahah',
+        name:'heihei'
+      }
+      var obj = new XMLHttpRequest();
+      obj.open("POST", 'http://localhost:3000', true);
+      obj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");  // 添加http头，发送信息至服务器时内容编码类型
+      obj.onreadystatechange = function() {
+          if (obj.readyState == 4 && (obj.status == 200 || obj.status == 304)) {  // 304未修改
+            console.log('heihei')
+          }
+      };
+      obj.send(data);
+    </script>
+  </body>
+</html>
