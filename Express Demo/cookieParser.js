@@ -22,5 +22,9 @@ app.get('/',(req,res)=>{
 
 app.get('/set',(req,res)=>{
   res.cookie('name','heiheihei',{maxAge:60000});
+  //最后一个参数
+
+
+
   res.send('设置成功哦');
 })
