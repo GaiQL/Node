@@ -43,7 +43,7 @@ app.get('/set',(req,res)=>{
   // path     表示当前设置的cookie在哪个路由下可以访问。
   // httpOnly 设置为true时，表示只有在node.js服务端可以操作cookie，没法用js脚本语言去操作cookie。
   // signed   加密cookie，获取不再是req.cookies，而是req.signedCookies去获取。
-
+  // secure   设置为true后，cookie再http中是无效的，在https中才有效。
 
   res.send('设置成功哦');
 
