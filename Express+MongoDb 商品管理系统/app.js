@@ -3,6 +3,7 @@ var MongoClient = require('mongodb').MongoClient;
 var bodyParse = require('body-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
+var md5 = require('md5-node');
 
 var DBurl = 'mongodb://127.0.0.1:27017/merManage';
 
@@ -58,13 +59,18 @@ app.get('/login',(req,res)=>{
 app.set('view degnic','ejs');
 app.post('/dologin',(req,res)=>{
   var data = req.body;
+  var userName = req.body.userName;
+  var password = md5(req.body.password);
   console.log(data);
   MongoClient.connect(DBurl,(err,db)=>{
     if(err){
       console.log('数据库连接失败');
     }else{
       var list = [];
-      var curosr = db.collection('user').find(data);
+      var curosr = db.collection('user').find({
+        userName:userName,
+        password:password
+      });
       //去数据库寻找数据的时候，要记得去遍历拿数据。
 
       //另一种遍历数据的方法
@@ -89,9 +95,27 @@ app.get('/',(req,res)=>{
 
 app.get('/goods',(req,res)=>{
 
-  res.render('index',{
-    name:req.session.userInfo.userName
-  });
+  MongoClient.connect(DBurl,(err,db)=>{
+    if(err){
+      console.log('数据库连接失败');
+    }else{
+      var list = [];
+      var result = db.collection('goodsList').find()
+
+      result.toArray((err,data)=>{
+        if(err){
+          console.log('查询失败')
+        }else{
+          list = data;
+          res.render('index',{
+            list:list
+          });
+
+          console.log(data);
+        }
+      })
+    }
+  })
 
 })
 
