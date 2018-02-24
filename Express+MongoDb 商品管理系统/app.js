@@ -4,6 +4,7 @@ var bodyParse = require('body-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var md5 = require('md5-node');
+var dbMoudle = require('./module/db.js');
 
 var DBurl = 'mongodb://127.0.0.1:27017/merManage';
 
@@ -83,6 +84,7 @@ app.post('/dologin',(req,res)=>{
           res.send('<script>alert("您输入的账号密码不存在哦...");location.href="/login"</script>')
         }
       })
+      db.close();
 
     }
   })
@@ -100,20 +102,26 @@ app.get('/goods',(req,res)=>{
       console.log('数据库连接失败');
     }else{
       var list = [];
-      var result = db.collection('goodsList').find()
-
-      result.toArray((err,data)=>{
-        if(err){
-          console.log('查询失败')
-        }else{
-          list = data;
-          res.render('index',{
-            list:list
-          });
-
-          console.log(data);
-        }
+      dbMoudle.find('goodsList',{},(data)=>{
+        list = data;
+        res.render('index',{
+          list:list
+        });
       })
+      // var result = db.collection('goodsList').find()
+      //
+      // result.toArray((err,data)=>{
+      //   if(err){
+      //     console.log('查询失败')
+      //   }else{
+      //     list = data;
+      //     res.render('index',{
+      //       list:list
+      //     });
+      //     db.close();
+      //     console.log(data);
+      //   }
+      // })
     }
   })
 
@@ -123,10 +131,36 @@ app.get('/add',(req,res)=>{
   res.render('add');
 })
 
+app.post('/doAdd',(req,res)=>{
+  console.log(req.body);
+  dbMoudle.add('goodsList',req.body,(status)=>{
+    if( status ){
+      res.redirect('/goods')
+    }else{
+      res.redirect('/add');
+      res.send('<script>alert("添加失败")</script>')
+    }
+  })
+})
+
 app.get('/edit',(req,res)=>{
   res.render('edit');
 })
 
+app.get('/doEdit',(req,res)=>{
+  dbMoudle.edit('goodsList',{name:'嘿嘿嘿'},{name:'哈哈哈'},(status)=>{
+    if(status){
+      res.send('修改成功');
+    }
+  })
+})
+app.get('/doDelete',(req,res)=>{
+  dbMoudle.delete('goodsList',{name:'睡觉吧'},(status)=>{
+    if(status){
+      res.send('删除成功');
+    }
+  })
+})
 
 app.get('/quit',(req,res)=>{
   req.session.destroy((err)=>{
