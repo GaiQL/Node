@@ -1,6 +1,18 @@
 var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
-var bodyParse = require('body-parser');
+var app = new express;
+
+
+//获取 post 数据;------------无法上传图片
+// var bodyParse = require('body-parser');
+// app.use(bodyParse.urlencoded({extended:false}))
+// app.use(bodyParse.json())
+
+
+// ------图片上传和获取form表单数据；
+var multiparty = require('multiparty');
+
+
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var md5 = require('md5-node');
@@ -8,15 +20,13 @@ var dbMoudle = require('./module/db.js');
 
 var DBurl = 'mongodb://127.0.0.1:27017/merManage';
 
-var app = new express;
 
 app.listen(8000);
 
 app.set('view engine','ejs');
 
 app.use(express.static('public'));
-app.use(bodyParse.urlencoded({extended:false}))
-app.use(bodyParse.json())
+app.use('img',express.static('img'));
 
 
 app.use(session({
@@ -132,15 +142,34 @@ app.get('/add',(req,res)=>{
 })
 
 app.post('/doAdd',(req,res)=>{
-  console.log(req.body);
-  dbMoudle.add('goodsList',req.body,(status)=>{
-    if( status ){
-      res.redirect('/goods')
-    }else{
+
+  var form = new multiparty.Form();
+
+  form.uploadDir = 'img';
+
+  form.parse(req, function(err, fields, files) {
+    if(err){
+      console.log('multiparty调用错误',err)
       res.redirect('/add');
-      res.send('<script>alert("添加失败")</script>')
+      return;
     }
-  })
+
+    console.log( fields )
+    console.log( files )
+
+
+  });
+
+
+
+  // dbMoudle.add('goodsList',req.body,(status)=>{
+  //   if( status ){
+  //     res.redirect('/goods')
+  //   }else{
+  //     res.redirect('/add');
+  //     res.send('<script>alert("添加失败")</script>')
+  //   }
+  // })
 })
 
 app.get('/edit',(req,res)=>{
@@ -173,6 +202,9 @@ app.get('/quit',(req,res)=>{
 
 
 
-//明天至少看两集视频，更新项目....
-//被专本报考什么的弄晕头了，缓过来这两天基本上项目每天又都可以更新了...
-//我先打个卡....
+/*
+    实现了点击修改后的数据加载，和页面跳转
+    图片   配置多个静态文件托管
+    实现了图片上传
+    form表达数据和图片上传都用 Mulitparty 模块获取
+*/
