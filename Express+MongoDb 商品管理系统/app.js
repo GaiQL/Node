@@ -1,12 +1,13 @@
 var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
 var app = new express;
+var fs = require('fs');
 
 
 //获取 post 数据;------------无法上传图片
-// var bodyParse = require('body-parser');
-// app.use(bodyParse.urlencoded({extended:false}))
-// app.use(bodyParse.json())
+var bodyParse = require('body-parser');
+app.use(bodyParse.urlencoded({extended:false}))
+app.use(bodyParse.json())
 
 
 // ------图片上传和获取form表单数据；
@@ -26,7 +27,13 @@ app.listen(8000);
 app.set('view engine','ejs');
 
 app.use(express.static('public'));
-app.use('img',express.static('img'));
+//图片路径
+//    /Img/JciBqktmhTLp0IqhZSOWMPD6.jpg/
+app.use('/Img',express.static('Img'));
+
+
+// var index = require('./router/index.js');
+// app.use('/admin',index);
 
 
 app.use(session({
@@ -42,6 +49,7 @@ app.use(session({
   })
 }))
 
+//权限判断------------
 app.use((req,res,next)=>{
 
   if( req.url == '/login' || req.url == '/dologin' ){
@@ -69,6 +77,15 @@ app.get('/login',(req,res)=>{
 
 app.set('view degnic','ejs');
 app.post('/dologin',(req,res)=>{
+
+  // var form = new multiparty.Form();
+  // form.parse(req, function(err, fields, files) {
+  //   if( err ){
+  //     console.log(err);
+  //     return
+  //   }
+  // }
+
   var data = req.body;
   var userName = req.body.userName;
   var password = md5(req.body.password);
@@ -143,50 +160,111 @@ app.get('/add',(req,res)=>{
 
 app.post('/doAdd',(req,res)=>{
 
+  //实例化multiparty对象
   var form = new multiparty.Form();
 
-  form.uploadDir = 'img';
+  //指定图片上传的文件路径；
+  form.uploadDir = 'Img';
 
+  //传入req，获取表单和图片数据;
   form.parse(req, function(err, fields, files) {
     if(err){
       console.log('multiparty调用错误',err)
       res.redirect('/add');
       return;
     }
-
-    console.log( fields )
-    console.log( files )
-
-
+    let { name,price,postage,description,_id } = fields;
+    let data = {
+      name:name[0],
+      price:price[0],
+      postage:postage[0],
+      description:description[0],
+      img:files.img[0].path,
+      _id:_id
+    };
+    console.log(data);
+         // console.log( fields )
+    // {
+    //   name: [ 'zcxv' ],
+    //   price: [ '123123' ],
+    //   postage: [ '111' ],
+    //   description: [ '123123' ]
+    // }
+         // console.log( files )
+    // {
+    //   img:[
+    //       { fieldName: 'img',
+    //          originalFilename: 'lADPBbCc1Sy7OQ3NCTzNAu4_750_2364.jpg',
+    //          path: 'img\\nUBZYJRMGaYvnuG-E3c1zIbY.jpg',
+    //          headers: [Object],
+    //          size: 35830
+    //       }
+    //      ]
+    // }
+    dbMoudle.add('goodsList',data,(status)=>{
+      if( status ){
+        res.redirect('/goods')
+      }else{
+        res.redirect('/add');
+        res.send('<script>alert("添加失败")</script>')
+      }
+    })
   });
-
-
-
-  // dbMoudle.add('goodsList',req.body,(status)=>{
-  //   if( status ){
-  //     res.redirect('/goods')
-  //   }else{
-  //     res.redirect('/add');
-  //     res.send('<script>alert("添加失败")</script>')
-  //   }
-  // })
 })
 
 app.get('/edit',(req,res)=>{
-  res.render('edit');
-})
-
-app.get('/doEdit',(req,res)=>{
-  dbMoudle.edit('goodsList',{name:'嘿嘿嘿'},{name:'哈哈哈'},(status)=>{
-    if(status){
-      res.send('修改成功');
-    }
+  console.log(req.query._id);
+  //这为啥  ObjectId 存的时候存不上......
+  dbMoudle.find('goodsList',{"_id":new dbMoudle.ObjectId(req.query._id)},(data)=>{
+    console.log(data)
+    res.render('edit',{
+      data:data[0]
+    });
   })
 })
+
+app.post('/doEdit',(req,res)=>{
+
+  console.log(213);
+
+  var form = new multiparty.Form();
+
+  form.uploadDir = 'Img';
+
+  form.parse(req, function(err, fields, files) {
+
+    if(err){
+      console.log('multiparty调用错误',err)
+      res.redirect('/add');
+      return;
+    }
+    let { name,price,postage,description,_id } = fields;
+    let data = {
+      name:name[0],
+      price:price[0],
+      postage:postage[0],
+      description:description[0],
+      img:files.img[0].path,
+    };
+    if( !files.img[0].originalFilename ){
+      delete data.img;
+      fs.unlinkSync(files.img[0].path);
+    }
+    console.log(data);
+
+    dbMoudle.edit('goodsList',{"_id":new dbMoudle.ObjectId(_id[0])},data,(status)=>{
+      if(status){
+        res.redirect('/goods');
+      }
+    })
+
+  })
+})
+
 app.get('/doDelete',(req,res)=>{
-  dbMoudle.delete('goodsList',{name:'睡觉吧'},(status)=>{
+  dbMoudle.delete('goodsList',{"_id":new dbMoudle.ObjectId(req.query._id)},(status)=>{
     if(status){
-      res.send('删除成功');
+      res.redirect('/goods');
     }
   })
 })
@@ -207,4 +285,12 @@ app.get('/quit',(req,res)=>{
     图片   配置多个静态文件托管
     实现了图片上传
     form表达数据和图片上传都用 Mulitparty 模块获取
+
+    都有哪些接口
+    登录的接口
+    商品里列表的接口
+    新增商品的接口
+    编辑商品
+    删除商品
+
 */

@@ -48,11 +48,11 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive input-form">
-                        <form action="/doAdd" method="post">
+                        <form action="/doAdd" method="post" enctype="multipart/form-data">
                             <ul>
                                 <li>  商品名称: <input type="text" name="name"/></li>
 
-                                <li>  商品图片: <input type="file" name="img" enctype="multipart/form-data"/></li>
+                                <li>  商品图片: <input type="file" name="img"/></li>
                                 <li>  商品价格: <input type="text" name="price"/></li>
                                 <li>  商品邮费: <input type="text" name="postage"/></li>
 

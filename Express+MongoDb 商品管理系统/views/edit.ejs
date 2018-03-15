@@ -49,17 +49,19 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive input-form">
-                        <form action="/doAdd" method="post">
+                        <form action="/doEdit" method="post" enctype="multipart/form-data">
                             <ul>
-                                <li>  商品名称: <input type="text" name="title"/></li>
+                                <input name="_id" value="<%=data._id%>" style="display:none"/>
+                                <li>  商品名称: <input type="text" name="name" value="<%=data.name%>"/></li>
 
-                                <li>  商品图片: <input type="file" name="pic"/></li>
-                                <li>  商品价格: <input type="text" name="price"/></li>
-                                <li>  商品邮费: <input type="text" name="fee"/></li>
+                                <li>  商品图片: <input type="file" name="img" id="img"/></li>
+                                <li style="padding:10px 0px 10px 60px;">  <img src="<%=data.img%>" width="100" id="photo"/>  </li>
+                                <li>  商品价格: <input type="text" name="price" value="<%=data.price%>"/></li>
+                                <li>  商品邮费: <input type="text" name="postage" value="<%=data.postage%>"/></li>
 
                                 <li>
                                     商品描述:
-                                    <textarea name="description" id="" cols="60" rows="8"></textarea>
+                                    <textarea name="description" id="" cols="60" rows="8"><%=data.description%></textarea>
                                 </li>
 
                                 <li>
@@ -80,6 +82,24 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript">
+  var img = document.getElementById('img');
+  var photo = document.getElementById('photo');
+  img.onchange = function(a,b,c){
+    console.log(this.files[0]);
+    console.log(a);
+      var reads= new FileReader();
+     // f=document.getElementById('file').files[0];
+     reads.readAsDataURL(this.files[0]);
+     reads.onload=function (e) {
+          console.log( this.result )
+          photo.src = this.result;
+         // document.getElementById('show').src=this.result;
+     };
+  }
+  img.onload = (a,b,c) => {
+    cosonle.log(a,b,c)
+  }
+</script>
 </body>
 </html>

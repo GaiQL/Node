@@ -1,6 +1,8 @@
 var MongoClient = require('mongodb').MongoClient;
 var DBurl = 'mongodb://127.0.0.1:27017/merManage';
 
+var ObjectId = require('mongodb').ObjectId;
+
 function __connect( callback ){
 
   MongoClient.connect(DBurl,(err,db)=>{
@@ -14,6 +16,8 @@ function __connect( callback ){
 
   })
 }
+
+exports.ObjectId = ObjectId;
 
 exports.find = function(collection,obj,callback){
   __connect((db)=>{

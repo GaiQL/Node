@@ -74,14 +74,14 @@
               <% for(var i=0;i<list.length;i++){ %>
                     <tr>
                         <td><%=i+1%></td>
-                        <td><%=list[i].img%></td>
+                        <td><img src="<%=list[i].img%>" width="50"/></td>
                         <td><%=list[i].name%></td>
                         <td><%=list[i].price%>元</td>
                         <td><%=list[i].postage%>元</td>
 
                         <td class="text-center">
-                          <a href="/edit">  修改 </a>
-                          <a href="/remove">  删除 </a>
+                          <a href="/edit?_id=<%=list[i]._id%>" >  修改 </a>
+                          <a href="/doDelete?_id=<%=list[i]._id%>">  删除 </a>
                         </td>
                     </tr>
                 <% }%>
